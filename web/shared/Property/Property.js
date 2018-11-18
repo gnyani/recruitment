@@ -4,8 +4,8 @@ import React from 'react';
 import { graphql } from 'react-relay';
 import { Flex } from '@rebass/grid/emotion';
 import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { Link } from '../../controls/link';
 
 import {
@@ -26,6 +26,9 @@ const PropertyFragment = createFragment<PropertyData>(
     fragment Property_property on Property {
       id
       livingSurface
+      landSurface
+      numberOfRooms
+      numberOfParkings
     }
   `
 );
@@ -36,10 +39,22 @@ const PropertyUpsertLead = createMutation<PropertyUpsertMutation, {}>(graphql`
       property {
         id
         livingSurface
+        landSurface
+        numberOfRooms
+        numberOfParkings
       }
     }
   }
 `);
+
+const styles = {
+  height: 40,
+  borderColor: 'gray',
+  borderWidth: 1,
+  width: 300,
+  padding: 8,
+  fontSize: 18,
+};
 
 type Props = {|
   ...FragmentRefs<PropertyData>,
@@ -58,7 +73,63 @@ export const Property = (props: Props) => {
               <PropertyUpsertLead>
                 {(/* use { mutate, mutating } to commit changes to the API */) => (
                   <>
-                    <Typography variant="h6">Start here</Typography>
+                    <Formik
+                      initialValues={{
+                        livingSurface: '',
+                        landSurface: '',
+                        NoOfRooms: '',
+                        NoOfParkings: '',
+                      }}
+                      validate={values => {
+                        let errors = {};
+                        if (!values.livingSurface) {
+                          errors.livingSurface = 'Required';
+                        }
+                        return errors;
+                      }}
+                      onSubmit={(values, { setSubmitting }) => {
+                        setTimeout(() => {
+                          alert(JSON.stringify({ values }));
+                          setSubmitting(false);
+                        }, 400);
+                      }}
+                    >
+                      {({ isSubmitting }) => (
+                        <Form>
+                          <label>livingSurface</label>
+                          <Field
+                            type="text"
+                            name="livingSurface"
+                            style={styles}
+                          />
+                          <ErrorMessage name="livingSurface" component="div" />
+                          <br />
+                          <label>landSurface</label>
+                          <Field
+                            type="text"
+                            name="landSurface"
+                            style={styles}
+                          />
+                          <ErrorMessage name="landSurface" component="div" />
+                          <br />
+                          <label>NoOfRooms</label>
+                          <Field type="text" name="NoOfRooms" style={styles} />
+                          <ErrorMessage name="NoOfRooms" component="div" />
+                          <br />
+                          <label>NoOfParkings</label>
+                          <Field
+                            type="text"
+                            name="NoOfParkings"
+                            style={styles}
+                          />
+                          <ErrorMessage name="NoOfParkings" component="div" />
+                          <br />
+                          <button type="submit" disabled={isSubmitting}>
+                            Submit
+                          </button>
+                        </Form>
+                      )}
+                    </Formik>
                     <Link href={{ pathname: '/' }}>
                       <Button
                         to="/"

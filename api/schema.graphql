@@ -46,6 +46,9 @@ type Property implements Node {
   livingSurface: Float
   createdAt: DateTime
   updatedAt: DateTime
+  landSurface: Float
+  numberOfRooms: Float
+  numberOfParkings: Int
 }
 
 # A connection to a list of items.
@@ -75,6 +78,9 @@ input PropertyFilters {
 input PropertyInput {
   id: ID
   livingSurface: Float
+  landSurface: Float
+  numberOfRooms: Float
+  numberOfParkings: Int
 }
 
 type Query {
